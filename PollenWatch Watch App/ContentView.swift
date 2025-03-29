@@ -1,0 +1,90 @@
+//
+//  ContentView.swift
+//  PollenWatch Watch App
+//
+//  Created by Dennis on 2025-03-26.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+  @State private var pollenData: PollenResponse?
+  @State private var pollenDataFetched: Date?
+  @State private var errorMessage: String?
+  @State private var loading = true
+  
+  private var iso8601: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter
+  }()
+  private var dateFormatter = DateFormatter()
+
+  var body: some View {
+      VStack {
+        List {
+          if let pollenData = pollenData {
+              ForEach(pollenData.cities, id: \.city) { city in
+                CityView(city: city)
+              }
+              VStack(alignment: .leading) {
+                Text("Data updated:")
+                  .font(.title3)
+                  .padding(.bottom, 4)
+                if let updateTime = iso8601.date(from: pollenData.updateTime) {
+                  Text(updateTime.formatted())
+                } else {
+                  Text("Unable to parse updateTime stamp :O")
+                    .foregroundStyle(.red)
+                }
+              }
+              VStack(alignment: .leading) {
+                Text("Last fetch:")
+                  .font(.title3)
+                  .padding(.bottom, 4)
+                if let pollenDataFetched = pollenDataFetched {
+                  Text(dateFormatter
+                    .string(from: pollenDataFetched))
+                } else {
+                  Text("<No date for fetch>")
+                }
+              }
+          } else if let errorMessage = errorMessage, !loading {
+            Text("Error: \(errorMessage)")
+              .foregroundStyle(.red)
+          } else {
+            ProgressView("Loading...")
+          }
+          if !loading {
+            Button("Refetch data") {
+              Task {
+                await fetchData()
+              }
+            }
+          }
+        }
+      }
+      .task {
+          await fetchData()
+      }
+      .padding()
+  }
+  
+  private func fetchData() async {
+    loading = true
+    do {
+      pollenData = try await PollenApi.shared.fetchData()
+      pollenDataFetched = Date()
+      errorMessage = nil;
+    } catch {
+      pollenData = nil;
+      pollenDataFetched = nil;
+      errorMessage = error.localizedDescription
+    }
+    loading = false
+  }
+}
+
+#Preview {
+    ContentView()
+}
