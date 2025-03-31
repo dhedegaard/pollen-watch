@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  PollenWatch Watch App
-//
-//  Created by Dennis on 2025-03-26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -12,6 +5,7 @@ struct ContentView: View {
   @State private var pollenDataFetched: Date?
   @State private var errorMessage: String?
   @State private var loading = true
+  @Environment(\.scenePhase) private var scenePhase
   
   private var iso8601: ISO8601DateFormatter = {
     let formatter = ISO8601DateFormatter()
@@ -68,6 +62,18 @@ struct ContentView: View {
           await fetchData()
       }
       .padding()
+      .onAppear{
+        Task {
+          await fetchData()
+        }
+      }
+      .onChange(of: scenePhase) { oldPhase, newPhase in
+        if oldPhase != newPhase && newPhase == .active {
+          Task {
+            await fetchData()
+          }
+        }
+      }
   }
   
   private func fetchData() async {
