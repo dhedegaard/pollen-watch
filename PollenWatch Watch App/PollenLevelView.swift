@@ -13,9 +13,8 @@ func severityToColor(severity: PollenLevelSeverity) -> Color {
   }
 }
 
-
 struct PollenLevelView : View {
-  let pollen: PollenLevel  
+  let pollen: PollenLevel
 
   var body: some View {
     HStack() {
