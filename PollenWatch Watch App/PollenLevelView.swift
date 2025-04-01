@@ -1,21 +1,22 @@
 import SwiftUI
 
-struct PollenLevelView : View {
-  let pollen: PollenLevel
-  
-  func severityToColor(severity: PollenLevelSeverity) -> Color {
-    switch severity {
-    case .high:
-      Color.red
-    case .medium:
-      Color.orange
-    case .low:
-      Color.green
-    case .none:
-      Color.gray
-    }
+func severityToColor(severity: PollenLevelSeverity) -> Color {
+  switch severity {
+  case .high:
+    Color.red
+  case .medium:
+    Color.orange
+  case .low:
+    Color.green
+  case .none:
+    Color.gray
   }
-  
+}
+
+
+struct PollenLevelView : View {
+  let pollen: PollenLevel  
+
   var body: some View {
     HStack() {
       Text("\(pollen.label):")
