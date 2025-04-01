@@ -8,7 +8,7 @@ struct CityView : View {
       Text(city.city)
         .font(.title3)
         .padding(.bottom, 4)
-      ForEach(city.levels, id: \.label) { pollen in
+      ForEach(city.levels.filter { $0.inSeason }, id: \.label) { pollen in
         PollenLevelView(pollen: pollen)
       }
     }
