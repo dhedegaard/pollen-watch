@@ -4,7 +4,7 @@ struct ContentView: View {
   @State private var pollenData: PollenResponse?
   @State private var pollenDataFetched: Date?
   @State private var errorMessage: String?
-  @State private var loading = true
+  @State private var loading = false
   @Environment(\.scenePhase) private var scenePhase
   
   private var iso8601: ISO8601DateFormatter = {
@@ -75,8 +75,12 @@ struct ContentView: View {
         }
       }
   }
-  
+
   private func fetchData() async {
+    // TODO: This is not really thread safe or anything, we should implement properly later 😊
+    if loading {
+      return
+    }
     loading = true
     do {
       pollenData = try await PollenApi.shared.fetchData()
