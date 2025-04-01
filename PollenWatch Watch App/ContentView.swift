@@ -38,8 +38,7 @@ struct ContentView: View {
                 .font(.title3)
                 .padding(.bottom, 4)
               if let pollenDataFetched = pollenDataFetched {
-                Text(dateFormatter
-                  .string(from: pollenDataFetched))
+                Text(pollenDataFetched.formatted())
               } else {
                 Text("<No date for fetch>")
               }
