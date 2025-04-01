@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PollenView : View {
+struct PollenLevelView : View {
   let pollen: PollenLevel
   
   func severityToColor(severity: PollenLevelSeverity) -> Color {

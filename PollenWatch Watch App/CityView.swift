@@ -9,7 +9,7 @@ struct CityView : View {
         .font(.title3)
         .padding(.bottom, 4)
       ForEach(city.levels, id: \.label) { pollen in
-        PollenView(pollen: pollen)
+        PollenLevelView(pollen: pollen)
       }
     }
   }

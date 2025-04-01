@@ -15,34 +15,35 @@ struct ContentView: View {
   private var dateFormatter = DateFormatter()
 
   var body: some View {
+    ScrollViewReader { viewReader in
       VStack {
         List {
           if let pollenData = pollenData {
-              ForEach(pollenData.cities, id: \.city) { city in
-                CityView(city: city)
+            ForEach(pollenData.cities, id: \.city) { city in
+              CityView(city: city)
+            }
+            VStack(alignment: .leading) {
+              Text("Data updated:")
+                .font(.title3)
+                .padding(.bottom, 4)
+              if let updateTime = iso8601.date(from: pollenData.updateTime) {
+                Text(updateTime.formatted())
+              } else {
+                Text("Unable to parse updateTime stamp :O")
+                  .foregroundStyle(.red)
               }
-              VStack(alignment: .leading) {
-                Text("Data updated:")
-                  .font(.title3)
-                  .padding(.bottom, 4)
-                if let updateTime = iso8601.date(from: pollenData.updateTime) {
-                  Text(updateTime.formatted())
-                } else {
-                  Text("Unable to parse updateTime stamp :O")
-                    .foregroundStyle(.red)
-                }
+            }
+            VStack(alignment: .leading) {
+              Text("Last fetch:")
+                .font(.title3)
+                .padding(.bottom, 4)
+              if let pollenDataFetched = pollenDataFetched {
+                Text(dateFormatter
+                  .string(from: pollenDataFetched))
+              } else {
+                Text("<No date for fetch>")
               }
-              VStack(alignment: .leading) {
-                Text("Last fetch:")
-                  .font(.title3)
-                  .padding(.bottom, 4)
-                if let pollenDataFetched = pollenDataFetched {
-                  Text(dateFormatter
-                    .string(from: pollenDataFetched))
-                } else {
-                  Text("<No date for fetch>")
-                }
-              }
+            }
           } else if let errorMessage = errorMessage, !loading {
             Text("Error: \(errorMessage)")
               .foregroundStyle(.red)
@@ -58,10 +59,11 @@ struct ContentView: View {
           }
         }
       }
+    }
       .task {
           await fetchData()
       }
-      .padding()
+      .padding(1)
       .onAppear{
         Task {
           await fetchData()
