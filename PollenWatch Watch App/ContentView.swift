@@ -18,6 +18,11 @@ struct ContentView: View {
     ScrollViewReader { viewReader in
       VStack {
         List {
+          // TODO: Fix this!
+          Text("TODO: Fix this later!")
+            .id("top")
+            .hidden()
+
           if let pollenData = pollenData {
             ForEach(pollenData.cities, id: \.city) { city in
               CityView(city: city)
@@ -25,6 +30,7 @@ struct ContentView: View {
             VStack(alignment: .leading) {
               Text("Data updated:")
                 .font(.title3)
+                .fontWeight(.bold)
                 .padding(.bottom, 4)
               if let updateTime = iso8601.date(from: pollenData.updateTime) {
                 Text(updateTime.formatted())
@@ -36,6 +42,7 @@ struct ContentView: View {
             VStack(alignment: .leading) {
               Text("Last fetch:")
                 .font(.title3)
+                .fontWeight(.bold)
                 .padding(.bottom, 4)
               if let pollenDataFetched = pollenDataFetched {
                 Text(pollenDataFetched.formatted())
@@ -49,13 +56,14 @@ struct ContentView: View {
           } else {
             ProgressView("Loading...")
           }
-          if !loading {
-            Button("Refetch data") {
-              Task {
-                await fetchData()
+          Button(loading ? "Reloading..." : "Refetch data") {
+            Task {
+              await fetchData()
+              withAnimation{
+                viewReader.scrollTo("top")
               }
             }
-          }
+          }.disabled(loading)
         }
       }
     }

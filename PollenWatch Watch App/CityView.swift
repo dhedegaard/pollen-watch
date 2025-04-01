@@ -7,6 +7,7 @@ struct CityView : View {
     VStack(alignment: .leading) {
       Text(city.city)
         .font(.title3)
+        .fontWeight(.bold)
         .padding(.bottom, 4)
       ForEach(city.levels.filter { $0.inSeason }, id: \.label) { pollen in
         PollenLevelView(pollen: pollen)
