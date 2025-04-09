@@ -16,13 +16,11 @@ struct ContentView: View {
 
   var body: some View {
     ScrollViewReader { viewReader in
-      VStack {
+      VStack(alignment: .leading) {
         List {
-          // TODO: Fix this!
-          Text("TODO: Fix this later!")
-            .id("top")
-            .hidden()
-
+          if loading {
+            ProgressView("Loading...")
+          }
           if let pollenData = pollenData {
             ForEach(pollenData.cities, id: \.city) { city in
               CityView(city: city)
@@ -53,8 +51,6 @@ struct ContentView: View {
           } else if let errorMessage = errorMessage, !loading {
             Text("Error: \(errorMessage)")
               .foregroundStyle(.red)
-          } else {
-            ProgressView("Loading...")
           }
           Button(loading ? "Reloading..." : "Refetch data") {
             Task {
@@ -70,7 +66,7 @@ struct ContentView: View {
       .task {
           await fetchData()
       }
-      .padding(1)
+      .padding(.horizontal, 1)
       .onAppear{
         Task {
           await fetchData()
